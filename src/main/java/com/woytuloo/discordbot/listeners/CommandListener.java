@@ -2,7 +2,9 @@ package com.woytuloo.discordbot.listeners;
 
 import com.woytuloo.discordbot.commands.*;
 import com.woytuloo.discordbot.deadlockservice.utls.DeadlockUtilsService;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ public class CommandListener extends ListenerAdapter {
         commands.put("ping", new HealthCheckCommand());
         commands.put("live", new ActiveMatchInfoCommand());
         commands.put("connect", new LinkCommand());
+        commands.put("look", new LookUpCommand());
         logger.info("Registered {} commands.", commands.size());
     }
 
@@ -44,13 +47,37 @@ public class CommandListener extends ListenerAdapter {
                 command.executeSlash(event);
             }catch (Exception e) {
                 logger.error("Error executing command: {} from user: {}", commandName, event.getUser().getName(), e);
-                event.reply("An error occurred while processing your command.\n"+e.getMessage())
+
+                EmbedBuilder errorEmbed = new EmbedBuilder()
+                        .setColor(0xFF0000) // Red color
+                        .setTitle("Error")
+                        .setDescription("An error occurred while processing your command.")
+                        .addField("Command", commandName, false)
+                        .addField("User", event.getUser().getAsTag(), false)
+                        .addField("Error", e.getMessage(), false)
+                        .setFooter("Please try again later or contact support if the issue persists.");
+
+
+                event.replyEmbeds(errorEmbed.build())
                         .setEphemeral(true)
                         .queue();
             }
         } else {
             logger.warn("Unknown slash command: {} from user: {}", commandName, event.getUser().getName());
             event.reply("Unknown command!").setEphemeral(true).queue();
+        }
+    }
+
+    @Override
+    public void onButtonInteraction(ButtonInteractionEvent event) {
+        if (event.getComponentId().startsWith("lookup:")) {
+            String[] data = event.getComponentId().split(":");
+            LookUpCommand.handleEvents(
+                    event,
+                    data[1],
+                    data[2],
+                    data[3]
+            );
         }
     }
 }

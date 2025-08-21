@@ -38,7 +38,6 @@ public class HeroStorage {
 
     public void loadHeroes(){
 
-
         List<Hero> heroes = webClient.get()
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<Hero>>() {})
@@ -60,6 +59,18 @@ public class HeroStorage {
             throw new IllegalStateException("Hero storage is not initialized or empty");
         }
         return heroMap.getOrDefault(heroId, "Unknown Hero");
+    }
+
+    public static String getHeroId(String heroName) {
+        if (heroMap == null || heroMap.isEmpty()) {
+            throw new IllegalStateException("Hero storage is not initialized or empty");
+        }
+        for (Map.Entry<String, String> entry : heroMap.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(heroName)) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalStateException("Hero storage does not contain any Hero ID");
     }
 
 

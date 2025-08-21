@@ -2,7 +2,7 @@ package com.woytuloo.discordbot.commands;
 
 import com.woytuloo.discordbot.deadlockservice.player.DeadlockPlayerService;
 import com.woytuloo.discordbot.entities.deadlockapiresponse.CurrentMatchResponse;
-import com.woytuloo.discordbot.entities.deadlockapiresponse.Player;
+import com.woytuloo.discordbot.entities.deadlockapiresponse.PlayerLiveResponse;
 import com.woytuloo.discordbot.storage.UserStorage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -35,7 +35,7 @@ public class ActiveMatchInfoCommand implements Command {
         if(textOption != null){
             String playerNickname = textOption.getAsString();
             try {
-                userId3 = UserStorage.getDeadlockIdByName(playerNickname);
+                userId3 = UserStorage.getDeadlockIdByName(playerNickname).getFirst().accountId();
             }catch (Exception e){
                 event.reply("No Deadlock account linked to the provided Discord username: " + playerNickname)
                         .setEphemeral(true)
@@ -89,7 +89,7 @@ public class ActiveMatchInfoCommand implements Command {
                     false
             );
 
-            for (Player player : team.players()) {
+            for (PlayerLiveResponse player : team.players()) {
                 embedBuilder.addField(
                         getHeroName(player.getHeroId()),
                         getPlayerTile(player),
@@ -117,7 +117,7 @@ public class ActiveMatchInfoCommand implements Command {
         event.replyEmbeds(embedBuilder.build()).setComponents(actionRows).queue();
     }
 
-    private String getPlayerTile(Player player) {
+    private String getPlayerTile(PlayerLiveResponse player) {
         return "```diff\n" +
                 getTitle(player) +
                 "\nK:  " + player.getKills() +
@@ -130,7 +130,7 @@ public class ActiveMatchInfoCommand implements Command {
                 "\n```";
     }
 
-    private String getTitle(Player player) {
+    private String getTitle(PlayerLiveResponse player) {
         double kills = Double.parseDouble(player.getKills());
         double deaths = Double.parseDouble(player.getDeaths());
         double assists = Double.parseDouble(player.getAssists());
@@ -148,7 +148,7 @@ public class ActiveMatchInfoCommand implements Command {
 
     }
 
-    private Double getKD(Player player) {
+    private Double getKD(PlayerLiveResponse player) {
         double kills = Double.parseDouble(player.getKills());
         double deaths = Double.parseDouble(player.getDeaths());
 
@@ -177,6 +177,6 @@ public class ActiveMatchInfoCommand implements Command {
     public record Team(
             String netWorth,
             String objectivesMask,
-            List<Player> players
+            List<PlayerLiveResponse> players
     ){}
 }

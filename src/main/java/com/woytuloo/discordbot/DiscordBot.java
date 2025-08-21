@@ -62,7 +62,11 @@ public class DiscordBot {
                         Commands.slash("live", "Get's live match data.")
                                 .addOption(OptionType.STRING, "discord_username", "Discord username of a player you want to look up.", false),
                         Commands.slash("connect", "Links bot with your Deadlock account. - provide your steam account link")
-                                .addOption(OptionType.STRING, "steam_url", "SteamUrl link : http://steamcommunity.com/profiles/7222222222505563 ", true))
+                                .addOption(OptionType.STRING, "steam_url", "SteamUrl link : http://steamcommunity.com/profiles/7222222222505563 ", true),
+                        Commands.slash("look", "Retrieves Deadlock account information for a player.")
+                                .addOption(OptionType.STRING, "deadlock_nickname", "WoyTuloO", false)
+                                .addOption(OptionType.STRING, "deadlock_hero", "Haze", false))
+
                 .queue(success -> logger.info("Slash commands registered successfully!"),
                         failure -> logger.error("Failed to register slash commands: ", failure));
     }

@@ -12,6 +12,6 @@ public record CurrentMatchResponse(
     @JsonProperty("objectives_mask_team0") String objectivesMaskTeam0,
     @JsonProperty("objectives_mask_team1") String objectivesMaskTeam1,
     @JsonProperty("start_time") String startTime,
-    @JsonProperty("players") List<Player> players
+    @JsonProperty("players") List<PlayerLiveResponse> players
 ) {
 }

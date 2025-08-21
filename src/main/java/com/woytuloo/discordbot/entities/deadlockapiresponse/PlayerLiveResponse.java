@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class Player {
+public class PlayerLiveResponse {
     @JsonProperty("account_id") String accountId;
     @JsonProperty("hero_id") String heroId;
     @JsonProperty("team") String team;
